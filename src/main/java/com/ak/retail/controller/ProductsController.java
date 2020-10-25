@@ -3,7 +3,8 @@ package com.ak.retail.controller;
 
 
 import com.ak.retail.Exception.InvalidPayloadException;
-import io.swagger.annotations.ApiOperation;
+import com.ak.retail.model.Product;
+import com.ak.retail.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.ak.retail.model.Product;
-import com.ak.retail.service.ProductService;
 
 
 @RestController
@@ -28,7 +26,7 @@ public class ProductsController {
     }
 	
 	@GetMapping( path = "/{id}")
-	public ResponseEntity getProductDetails(@PathVariable("id") Long id) throws Exception {
+	public ResponseEntity getProductDetails(@PathVariable("id") Long id) {
 		logger.info("Message Reached:" + id);
 		Product product = productService.getProductDetails(id);
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(product);

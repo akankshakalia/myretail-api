@@ -21,7 +21,7 @@ public class ProductControllerTests extends AbstractTests{
 	@MockBean
 	private ProductService service;
 	
-	Long productId = 13860428L;
+	private Long productId = 13860428L;
 	
 	   @Override
 	   @Before

@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-import javax.xml.bind.annotation.XmlRootElement;
 @Getter
 @Setter
 @AllArgsConstructor

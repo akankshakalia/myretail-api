@@ -1,7 +1,10 @@
 package com.ak.retail.service.impl;
 
-import java.util.Optional;
-
+import com.ak.retail.model.Product;
+import com.ak.retail.model.ProductPrice;
+import com.ak.retail.repository.PriceRepository;
+import com.ak.retail.repository.ProductsRepository;
+import com.ak.retail.service.ProductService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,11 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import com.ak.retail.model.Product;
-import com.ak.retail.model.ProductPrice;
-import com.ak.retail.repository.PriceRepository;
-import com.ak.retail.repository.ProductsRepository;
-import com.ak.retail.service.ProductService;
+import java.util.Optional;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -41,18 +40,18 @@ public class ProductServiceImplTests {
 	@MockBean
     private RestTemplate restTemplate;
 	
-	Long productId = 13860428L;
+	private Long productId = 13860428L;
 
 	
 	@Before
 	public void setUp() {}
 	
 	@Test
-	public void getProductDetails() throws Exception {
-		Optional<ProductPrice> optonalPrice = Optional.ofNullable(getProductPriceMockData());
+	public void getProductDetails()  {
+		Optional<ProductPrice> optionalPrice = Optional.ofNullable(getProductPriceMockData());
 	    Mockito
 	    .when(priceRepository.findByProductId(productId))
-	    .thenReturn(optonalPrice);
+	    .thenReturn(optionalPrice);
 	    
 	    Mockito
         .when(restTemplate.getForEntity(uri+productId, Product.class))
@@ -67,7 +66,7 @@ public class ProductServiceImplTests {
 	}
 	
 	@Test
-	public void getProduct() throws Exception {
+	public void getProduct() {
 		Optional<Product> optonalProduct = Optional.ofNullable(getProductMockData());
 	    Mockito
 	    .when(productRepository.findByProductId(productId))
@@ -80,7 +79,7 @@ public class ProductServiceImplTests {
 	}
 	
 	@Test
-	public void updateProductDetails() throws Exception {
+	public void updateProductDetails() {
 		Product product = getProductMockData();
 		ProductPrice price = getProductPriceMockData();
 		price.setValue(20.55);

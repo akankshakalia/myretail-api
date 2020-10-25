@@ -1,11 +1,15 @@
 package com.ak.retail.servce.impl;
 
 import com.ak.retail.Exception.ResourceNotFoundException;
+import com.ak.retail.model.Product;
+import com.ak.retail.model.ProductPrice;
+import com.ak.retail.repository.PriceRepository;
+import com.ak.retail.repository.ProductsRepository;
+import com.ak.retail.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
@@ -14,12 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import com.ak.retail.model.Product;
-import com.ak.retail.model.ProductPrice;
-import com.ak.retail.repository.PriceRepository;
-import com.ak.retail.repository.ProductsRepository;
-import com.ak.retail.service.ProductService;
 
 import java.util.Optional;
 
@@ -67,7 +65,7 @@ public class ProductServiceImpl implements ProductService{
 		return product;
 	}
 
-	private String getProductName(Long id) throws HttpStatusCodeException, RestClientException{
+	private String getProductName(Long id) throws RestClientException{
 		logger.info("Calling external api");
 		ResponseEntity<Product> resp = restTemplate.getForEntity(uri+id, Product.class);
 		return resp.getStatusCode() == HttpStatus.OK ? resp.getBody().getName() : null;
@@ -86,8 +84,8 @@ public class ProductServiceImpl implements ProductService{
 			price.setProductId(product.getProductId());
 			price.setValue(product.getCurrent_price().getValue());
 			price.setCurrency_code(product.getCurrent_price().getCurrency_code());
-			ProductPrice udpatePrice = priceRepository.save(price);
-			product.setCurrent_price(udpatePrice);
+			ProductPrice updatePrice = priceRepository.save(price);
+			product.setCurrent_price(updatePrice);
 		}
 		return product;
 	}
