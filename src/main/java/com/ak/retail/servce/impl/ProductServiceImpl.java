@@ -1,10 +1,13 @@
 package com.ak.retail.servce.impl;
 
+import com.ak.retail.Exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -37,19 +40,24 @@ public class ProductServiceImpl implements ProductService{
 	private ProductsRepository productRepository;
 	 
     @Override
-    @Retryable(value = { RestClientException.class }, maxAttemptsExpression = "5", backoff = @Backoff(delayExpression = "1000"))
-	public Product getProductDetails(Long id) throws RestClientException{
+	@Retryable(value = { RestClientException.class }, maxAttemptsExpression = "${retry.maxAttempts}", backoff = @Backoff(delayExpression = "${retry.delay}"))
+	public Product getProductDetails(Long id) throws RestClientException, ResourceNotFoundException{
 		Product product = new Product();
 		product.setProductId(id);
+		Optional<ProductPrice> productPrice = priceRepository.findByProductId(id);
+		if(!productPrice.isPresent()){
+			String err = String.format("Product with id %s does not exist ", id);
+			logger.info(err);
+			throw new ResourceNotFoundException(err);
+		}
 		product.setCurrent_price(priceRepository.findByProductId(id).get());
 		try {
 			product.setName(getProductName(id));
 		}catch(HttpStatusCodeException ex) {
 			int statusCode = ex.getStatusCode().value();
-			String errorpayload = ex.getResponseBodyAsString();
+			String errorPayload = ex.getResponseBodyAsString();
 			logger.error("Error calling external api");
-
-			throw new RestClientException(errorpayload + ":"+ statusCode);
+			throw new RestClientException(errorPayload + ":"+ statusCode);
 		}catch(RestClientException e){
 			logger.error("Error calling external api");
 
@@ -58,11 +66,11 @@ public class ProductServiceImpl implements ProductService{
 
 		return product;
 	}
-    
-    private String getProductName(Long id) throws HttpStatusCodeException, RestClientException{
-    	logger.info("Calling external api");
-    	Product res = restTemplate.exchange(uri+id, HttpMethod.GET, null, Product.class).getBody();
-    	return res.getName();
+
+	private String getProductName(Long id) throws HttpStatusCodeException, RestClientException{
+		logger.info("Calling external api");
+		ResponseEntity<Product> resp = restTemplate.getForEntity(uri+id, Product.class);
+		return resp.getStatusCode() == HttpStatus.OK ? resp.getBody().getName() : null;
     }
     
     @Override
