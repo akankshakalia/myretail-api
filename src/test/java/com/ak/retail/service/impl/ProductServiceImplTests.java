@@ -24,7 +24,7 @@ import com.ak.retail.service.ProductService;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class ProductServiceImplTest {
+public class ProductServiceImplTests {
 	
 	@Value("${api.uri}")
     private String uri;
@@ -90,6 +90,10 @@ public class ProductServiceImplTest {
 	    Mockito
 	    .when(priceRepository.findByProductId(productId))
 	    .thenReturn(optonalPrice);
+	    
+	    Mockito
+	    .when(priceRepository.save(Mockito.any()))
+	    .thenReturn(price);
 	    
 		Product result = productService.updateProductDetails(getProductDetailsMockData());
 		

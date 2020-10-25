@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MyRetailProductsApiApplication.class)
 @WebAppConfiguration
-public abstract class AbstractTest {
+public abstract class AbstractTests {
    protected MockMvc mvc;
    @Autowired
    WebApplicationContext webApplicationContext;

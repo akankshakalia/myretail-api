@@ -9,13 +9,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.ak.retail.AbstractTest;
+import com.ak.retail.AbstractTests;
 import com.ak.retail.model.Product;
 import com.ak.retail.model.ProductPrice;
 import com.ak.retail.service.ProductService;
 
 
-public class ProductControllerTest extends AbstractTest{
+public class ProductControllerTests extends AbstractTests{
 	
 
 	@MockBean
