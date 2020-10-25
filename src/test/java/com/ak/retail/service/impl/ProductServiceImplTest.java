@@ -68,15 +68,33 @@ public class ProductServiceImplTest {
 	
 	@Test
 	public void getProduct() throws Exception {
-		Optional<Product> optonalProdcut = Optional.ofNullable(getProductMockData());
+		Optional<Product> optonalProduct = Optional.ofNullable(getProductMockData());
 	    Mockito
 	    .when(productRepository.findByProductId(productId))
-	    .thenReturn(optonalProdcut);
+	    .thenReturn(optonalProduct);
 	    
 		Product result = productService.getProduct(productId);
 		
 		Assert.assertEquals(result.getProductId(), productId);
 		Assert.assertEquals(result.getName(), getProductMockData().getName());
+	}
+	
+	@Test
+	public void updateProductDetails() throws Exception {
+		Product product = getProductMockData();
+		ProductPrice price = getProductPriceMockData();
+		price.setValue(20.55);
+		price.setCurrency_code("INR");
+		product.setCurrent_price(price);
+		Optional<ProductPrice> optonalPrice = Optional.ofNullable(getProductPriceMockData());
+	    Mockito
+	    .when(priceRepository.findByProductId(productId))
+	    .thenReturn(optonalPrice);
+	    
+		Product result = productService.updateProductDetails(getProductDetailsMockData());
+		
+		Assert.assertEquals(result.getProductId(), productId);
+		Assert.assertEquals(result.getCurrent_price().getCurrency_code(), "INR");
 	}
 	
 	
